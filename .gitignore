@@ -1,0 +1,34 @@
+# Build/sim outputs
+simv
+simv.vcd
+wave.vcd
+*.vcd
+*.vvp
+*.out
+*.log
+*.dmp
+*.lxt*
+*.fst
+
+# Icarus/Verilator/Questa scratch
+*.o
+*.so
+*.vpi
+*.vpd
+simx*
+obj_dir/
+work/
+transcript
+vsim.wlf
+questa.do
+riviera/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
