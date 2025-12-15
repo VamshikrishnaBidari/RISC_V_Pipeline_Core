@@ -3,13 +3,14 @@
 `include "mux.v"
 
 module execute_cycle(clk, rst,
-                    RD1E, RD2E, ImmExtE, PCPlus4E, RDE, PCE,
+                    RD1E, RD2E, ImmExtE, PCPlus4E, RDE, PCE, ForwardAE, ForwardBE, ResultW,
                     RegWriteE, ResultSrcE, MemWriteE, BranchE, ALUControlE, ALUSrcE,
                     RegWriteM, ResultSrcM, MemWriteM, ALUResultM, WriteDataM, RDM, PCPlus4M, PCTargetE, PCSrcE);
         input clk, rst;
-        input [31:0] RD1E, RD2E, ImmExtE, PCPlus4E, PCE;
-        input [4:0] RDE;
+        input [31:0] RD1E, RD2E, ImmExtE, PCPlus4E, PCE, ResultW;
+        input [4:0] RDE, RS1E, RS2E;
         input RegWriteE, ResultSrcE, MemWriteE, BranchE;
+        input [1:0] ForwardAE, ForwardBE;
         input [2:0] ALUControlE;
         input ALUSrcE;
         output RegWriteM, ResultSrcM, MemWriteM;
@@ -18,24 +19,34 @@ module execute_cycle(clk, rst,
         output [31:0] PCTargetE;
         output PCSrcE;
 
-        wire [31:0] SrcBE, ALUResultE;
+        wire [31:0] SrcBE, SrcAE, ALUResultE, SrcB_mux;
         wire zeroE;
 
         // pipeline registers
         reg RegWriteE_r, ResultSrcE_r, MemWriteE_r;
         reg [31:0] ALUResultE_r, WriteDataE_r, PCPlus4E_r;
         reg [4:0] RDE_r;
+        
+        // 3:1 mux for ALU source A
+        assign SrcAE = (ForwardAE == 2'b00) ? RD1E :
+                        (ForwardAE == 2'b01) ? ResultW :
+                        (ForwardAE == 2'b10) ? ALUResultM : 32'b0;
+
+        // 3:1 mux
+        assign SrcB_mux = (ForwardBE == 2'b00) ? RD2E :
+                            (ForwardBE == 2'b01) ? ResultW :
+                            (ForwardBE == 2'b10) ? ALUResultM : 32'b0;
 
         // module instantiations
         mux u_alu_src_mux (
-            .a(RD2E),
+            .a(SrcB_mux),
             .b(ImmExtE),
             .s(ALUSrcE),
             .c(SrcBE)
         );
 
         alu u_alu (
-            .A(RD1E), .B(SrcBE), .aluControl(ALUControlE), .result(ALUResultE), .Z(zeroE), .V(), .N(), .C()
+            .A(SrcAE), .B(SrcBE), .aluControl(ALUControlE), .result(ALUResultE), .Z(zeroE), .V(), .N(), .C()
         );
 
         PC_Adder u_pc_adder (

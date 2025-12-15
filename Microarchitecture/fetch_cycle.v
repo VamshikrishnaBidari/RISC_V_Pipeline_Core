@@ -3,9 +3,10 @@
 `include "P_C.v"
 `include "mux.v"
 
-module fetch_cycle (clk, rst, InstrD, PCPlus4D, PCD, PCSrcE, PCTargetE);
+module fetch_cycle (clk, rst, stallF, EN, flushD, InstrD, PCPlus4D, PCD, PCSrcE, PCTargetE);
 
     input clk, rst;
+    input stallF, EN, flushD;
     input PCSrcE;
     input [31:0] PCTargetE;
     output [31:0] InstrD, PCPlus4D, PCD;
@@ -21,6 +22,7 @@ module fetch_cycle (clk, rst, InstrD, PCPlus4D, PCD, PCSrcE, PCTargetE);
 
     P_C Program_Counter (.clk(clk),
                         .rst(rst),
+                        .EN(stallF),
                         .PC(PC_F),
                         .PC_NEXT(PCF));
 
@@ -30,20 +32,24 @@ module fetch_cycle (clk, rst, InstrD, PCPlus4D, PCD, PCSrcE, PCTargetE);
 
     instruction_memory Inst_Mem_F  (.A(PCF), 
                                     .RD(InstrF), 
-                                    .rst(rst));
+                                    .rst(rst));                                                                                                                       
 
     // sequential logic
     always @(posedge clk or negedge rst) begin
         if(!rst) begin
-            InstrF_reg <= 32'b0;
-            PCF_reg <= 32'b0;
-            PCPlus4F_reg <= 32'b0;
+            InstrF_reg    <= 32'b0;
+            PCF_reg       <= 32'b0;
+            PCPlus4F_reg  <= 32'b0;
+        end else if (flushD) begin
+            InstrF_reg    <= 32'b0;
+            PCF_reg       <= 32'b0;
+            PCPlus4F_reg  <= 32'b0;
+        end else if (!EN) begin
+            InstrF_reg    <= InstrF;
+            PCF_reg       <= PCF;
+            PCPlus4F_reg  <= PCPlus4_F;
         end
-        else begin
-            InstrF_reg <= InstrF;
-            PCF_reg <= PCF;
-            PCPlus4F_reg <= PCPlus4_F;
-        end
+        // else hold on stall
     end
 
     // output assignments

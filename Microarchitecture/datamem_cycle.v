@@ -1,12 +1,14 @@
+`include "data_memory.v"
+
 module datamem_cycle (clk, rst, RegWriteM, ResultSrcM, MemWriteM, ALUResultM, WriteDataM, RDM, PCPlus4M,
-                    RegWriteW, ResultSrcW, ReadDataW, RDW, PCPlus4W);
+                    RegWriteW, ResultSrcW, ReadDataW, RDW, PCPlus4W, ALUResultW);
     
     input clk, rst;
     input RegWriteM, ResultSrcM, MemWriteM;
     input [31:0] ALUResultM, WriteDataM, PCPlus4M;
     input [4:0] RDM;
     output RegWriteW, ResultSrcW;
-    output [31:0] ReadDataW, PCPlus4W;
+    output [31:0] ReadDataW, PCPlus4W, ALUResultW;
     output [4:0] RDW;
 
     wire [31:0] ReadDataM;
