@@ -21,31 +21,29 @@ module pipeline_top_tb;
 		integer errors;
 		errors = 0;
 
-		// hold reset low, preload memories and registers
+		// hold reset low, preload program and data memories
 		rst = 1'b0;
-
-		// load program, data memory, and initial register file contents
 		$readmemh("imem.hex", dut.FETCH.Inst_Mem_F.memory);
 		$readmemh("dmem.hex", dut.MEM.u_data_memory.data_mem);
-		$readmemh("regs.hex", dut.DECODE.u_register_file.reg_file);
 
 		// deassert reset after setup
 		#1 rst = 1'b1;
 
+		// now preload register file (after reset release, so it isn't wiped)
+		$readmemh("regs.hex", dut.DECODE.u_register_file.reg_file);
+
 		// run long enough for pipeline to complete
-		repeat (40) @(posedge clk);
+		repeat (20) @(posedge clk);
 
 		// expected results
 		if (dut.DECODE.u_register_file.reg_file[23] !== 32'h00000008) begin
 			$display("ERROR: s7(x23) expected 0x00000008, got 0x%08h", dut.DECODE.u_register_file.reg_file[23]);
 			errors = errors + 1;
 		end
-
 		if (dut.DECODE.u_register_file.reg_file[24] !== 32'h0000000A) begin
 			$display("ERROR: s8(x24) expected 0x0000000A, got 0x%08h", dut.DECODE.u_register_file.reg_file[24]);
 			errors = errors + 1;
 		end
-
 		if (dut.DECODE.u_register_file.reg_file[7] !== 32'h0000003A) begin
 			$display("ERROR: t2(x7) expected 0x0000003A, got 0x%08h", dut.DECODE.u_register_file.reg_file[7]);
 			errors = errors + 1;

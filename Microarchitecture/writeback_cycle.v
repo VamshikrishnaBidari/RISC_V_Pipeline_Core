@@ -6,6 +6,6 @@ module writeback_cycle(clk, rst, ResultSrcW, ReadDataW, ALUResultW, ResultW);
 
 
     // module instantiations
-    Mux result_mux (.a(ReadDataW), .b(ALUResultW), .s(ResultSrcW), .c(ResultW));
+    Mux result_mux (.a(ALUResultW), .b(ReadDataW), .s(ResultSrcW), .c(ResultW));
 
 endmodule

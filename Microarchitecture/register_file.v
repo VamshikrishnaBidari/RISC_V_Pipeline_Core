@@ -10,9 +10,12 @@ module register_file(clk, rst, WE3, A1, A2, A3, WD3, RD1, RD2);
 
 
     // Read operations
-    assign RD1 = (rst == 0) ? 32'b0 : reg_file[A1];
-    assign RD2 = (rst == 0) ? 32'b0 : reg_file[A2];
+    // Read with same-cycle bypass
+    assign RD1 = (!rst) ? 32'b0 :
+                 (WE3 && (A1 == A3) && (A3 != 5'd0)) ? WD3 : reg_file[A1];
 
+    assign RD2 = (!rst) ? 32'b0 :
+                 (WE3 && (A2 == A3) && (A3 != 5'd0)) ? WD3 : reg_file[A2];
     // Write operation
     always @(posedge clk or negedge rst) begin
         if (!rst) begin

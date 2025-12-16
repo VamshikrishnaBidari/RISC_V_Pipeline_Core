@@ -1,10 +1,3 @@
-`include "Microarchitecture/fetch_cycle.v"
-`include "Microarchitecture/decode_cycle.v"
-`include "Microarchitecture/execute_cycle.v"
-`include "Microarchitecture/writeback_cycle.v"
-`include "Microarchitecture/datamem_cycle.v"
-`include "Microarchitecture/hazard_unit.v"
-
 module pipeline_top (clk, rst);
 
     input clk, rst;

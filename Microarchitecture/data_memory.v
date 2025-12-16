@@ -6,12 +6,14 @@ module data_memory(A, WD, WE, RD, clk, rst);
     output [31:0] RD;    // Read data output
 
     // 1024 x 32-bit data memory
-    reg [31:0] data_mem [1023:0];
+    reg [31:0] data_mem [0:1023];
 
     wire [9:0] waddr = A[31:2]; // Word aligned address
 
     // Read operation
-    assign RD = (~rst) ? {32{1'b0}} : data_mem[waddr];
+    assign RD = (~rst)            ? 32'h00000000 :
+                (waddr < 1024)    ? data_mem[waddr] :
+                                     32'h00000000;
 
     // Write operation
     always @(posedge clk) begin

@@ -1,7 +1,3 @@
-`include "PC_Adder.v"
-`include "/ALU/alu.v"
-`include "mux.v"
-
 module execute_cycle(clk, rst,
                     RD1E, RD2E, ImmExtE, PCPlus4E, RDE, PCE, ForwardAE, ForwardBE, ResultW,
                     RegWriteE, ResultSrcE, MemWriteE, BranchE, ALUControlE, ALUSrcE,
@@ -38,7 +34,7 @@ module execute_cycle(clk, rst,
                             (ForwardBE == 2'b10) ? ALUResultM : 32'b0;
 
         // module instantiations
-        mux u_alu_src_mux (
+        Mux u_alu_src_mux (
             .a(SrcB_mux),
             .b(ImmExtE),
             .s(ALUSrcE),
