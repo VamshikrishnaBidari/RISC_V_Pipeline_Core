@@ -1,6 +1,6 @@
 # RISC-V Pipelined Core (Verilog)
 
-A 5-stage RV32I pipeline (IF/ID/EX/MEM/WB) with hazard handling (forwarding, load-use stall, branch flush). This demo runs a small program from hex memories and verifies expected register results. JAL is **not** supported; implemented opcodes: R-type (add/sub/and/or/slt, etc. per ALU decoder), `lw`, `sw`, `beq`.
+A 5-stage RV32I pipeline (IF/ID/EX/MEM/WB) with hazard handling (forwarding, load-use stall, branch flush). This demo runs a small program from hex memories and verifies expected register results. JAL is **not** supported; implemented opcodes: R-type (add/sub/and/or/slt as per ALU decoder), `lw`, `sw`, `beq`.
 
 ## Top Architecture
 ![Top architecture](images/top_architecture.png)
